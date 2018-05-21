@@ -9,6 +9,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import timber.log.Timber;
+
 public abstract class BaseFragment extends Fragment {
     protected BaseActivity mActivity;
 
@@ -33,6 +35,7 @@ public abstract class BaseFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initVariable();
+        Timber.tag(getClass().getSimpleName());
     }
 
     @Override
@@ -47,7 +50,6 @@ public abstract class BaseFragment extends Fragment {
         //就等到rootView创建完后才回调onFragmentVisibleChange(true)
         //保证onFragmentVisibleChange()的回调发生在rootView创建完成之后，以便支持ui操作
         if (rootView == null) {
-            rootView = view;
             if (getUserVisibleHint()) {
                 if (isFirstVisible) {
                     if (isReuseView)
@@ -58,6 +60,7 @@ public abstract class BaseFragment extends Fragment {
                 onFragmentVisibleChange(true);
                 isFragmentVisible = true;
             }
+            rootView = view;
         }
         if (!isReuseView)
             init(view);

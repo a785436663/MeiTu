@@ -10,11 +10,11 @@
         fresco:actualImageScaleType="focusCrop"
         fresco:failureImage="@drawable/icon_failure"
         fresco:failureImageScaleType="centerInside"
-        fresco:placeholderImage="@drawable/icon_placeholder"
-        fresco:placeholderImageScaleType="fitCenter"
+        fresco:placeholderImageScaleType="focusCrop"
         fresco:progressBarAutoRotateInterval="5000"
-        fresco:progressBarImage="@drawable/icon_progress_bar"
         fresco:progressBarImageScaleType="centerInside"
         fresco:retryImage="@drawable/icon_retry"
         fresco:retryImageScaleType="centerCrop" />
+    <!--fresco:placeholderImage="@drawable/icon_placeholder"-->
+    <!--fresco:progressBarImage="@drawable/icon_progress_bar"-->
 </FrameLayout>

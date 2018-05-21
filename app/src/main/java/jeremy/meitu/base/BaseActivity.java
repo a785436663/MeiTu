@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 
+import jeremy.meitu.utils.ActivityUtils;
 import timber.log.Timber;
 
 /**
@@ -21,16 +22,39 @@ public abstract class BaseActivity extends AppCompatActivity {
         setContentView(getContentView());
         Timber.tag(getClass().getSimpleName());
         initView(savedInstanceState);
+        ActivityUtils.add(this);
     }
 
     protected abstract void initView(Bundle savedInstanceState);
 
     protected abstract int getContentView();
 
+    Fragment oldF;
+
     protected void switchFragment(@IdRes int containerViewId, Fragment f) {
+        if (f == null) {
+            return;
+        }
         FragmentManager fragmentM = getSupportFragmentManager();//管理对象
         FragmentTransaction trans = fragmentM.beginTransaction();//切换碎片
-        trans.replace(containerViewId, f);
+        if (oldF != null) {
+            trans.hide(oldF);
+        }
+        if (!f.isAdded()) {
+            trans.add(containerViewId, f);
+        }
+        trans.show(f);
+        oldF = f;
         trans.commit();
+    }
+
+    @Override
+    protected void onDestroy() {
+        ActivityUtils.remove(this);
+        super.onDestroy();
+    }
+
+    protected void exit() {
+        ActivityUtils.removeAll();
     }
 }

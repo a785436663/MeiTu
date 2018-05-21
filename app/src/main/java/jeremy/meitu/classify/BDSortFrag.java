@@ -1,34 +1,46 @@
-package jeremy.meitu.random;
+package jeremy.meitu.classify;
 
 import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
+import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.View;
 
 import jeremy.meitu.R;
 import jeremy.meitu.base.BaseFragment;
-import jeremy.meitu.entity.GankEntity;
-import jeremy.meitu.http.GankClient;
+import jeremy.meitu.entity.BDEntity;
+import jeremy.meitu.http.BDClient;
 import jeremy.meitu.utils.Utils;
-import rx.Observable;
 import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
- * Created by JIANGJIAN650 on 2018/5/19.
+ * Created by JIANGJIAN650 on 2018/5/21.
  */
 
-public class RandomFrag extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
+public class BDSortFrag extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
+    public static final String TITLE_TAG = "tabTitle";
+
+    public static BDSortFrag newInstance(String tabTitle) {
+        Bundle args = new Bundle();
+        BDSortFrag fragment = new BDSortFrag();
+        args.putString(TITLE_TAG, tabTitle);
+        fragment.setArguments(args);
+        return fragment;
+    }
+
     SwipeRefreshLayout mSwipeRefreshWidget;
     RecyclerView mRecyclerView;
     StaggeredGridLayoutManager mStaggeredGridLayoutManager;
     int lastVisibleItem;
-    StaggeredAdapter adapter;
+    BDStaggeredAdapter adapter;
+
+    String tabTitle;
+    int mPage = 0;
+    int mSize = 10;
 
     @Override
     protected int setView() {
@@ -40,11 +52,13 @@ public class RandomFrag extends BaseFragment implements SwipeRefreshLayout.OnRef
         mSwipeRefreshWidget = findViewById(view, R.id.swipe_refresh_widget);
         mRecyclerView = findViewById(view, R.id.recylerview);
         initRefresh();
+        Timber.e("init:" + (mSwipeRefreshWidget));
     }
 
     @Override
     protected void initData(Bundle savedInstanceState) {
-
+        if (getArguments() != null)
+            tabTitle = getArguments().getString(TITLE_TAG);
     }
 
     @Override
@@ -54,8 +68,9 @@ public class RandomFrag extends BaseFragment implements SwipeRefreshLayout.OnRef
 
     @Override
     protected void onFragmentFirstVisible() {
+        Timber.e("mSwipeRefreshWidget:" + (mSwipeRefreshWidget));
         mSwipeRefreshWidget.setRefreshing(true);
-        loadData();
+        loadData(mPage = 0, mSize);
     }
 
     private void initRefresh() {
@@ -78,7 +93,7 @@ public class RandomFrag extends BaseFragment implements SwipeRefreshLayout.OnRef
                         && lastVisibleItem + 1 == adapter.getItemCount()) {
                     mSwipeRefreshWidget.setRefreshing(true);
                     // 此处在现实项目中，请换成网络请求数据代码，sendRequest .....
-                    loadData();
+                    loadData(++mPage, mSize);
                 }
             }
 
@@ -95,39 +110,41 @@ public class RandomFrag extends BaseFragment implements SwipeRefreshLayout.OnRef
         mRecyclerView.setLayoutManager(mStaggeredGridLayoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        adapter = new StaggeredAdapter();
+        adapter = new BDStaggeredAdapter();
         mRecyclerView.setAdapter(adapter);
     }
 
-    private void loadData() {
-        Observable<GankEntity> o = GankClient.getInstance().getService().getRandom("福利", 10);
-        o.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(new Subscriber<GankEntity>() {
-                    @Override
-                    public void onCompleted() {
-                        Timber.d("GankEntity onCompleted");
-                    }
+    private void loadData(final int page, int size) {
+        if (TextUtils.isEmpty(tabTitle)) {
+            mSwipeRefreshWidget.setRefreshing(false);
+            return;
+        }
+        BDClient.getInstance().getImages(tabTitle, page * size, size).subscribe(new Subscriber<BDEntity>() {
+            @Override
+            public void onCompleted() {
+            }
 
-                    @Override
-                    public void onError(Throwable e) {
-                        Timber.d("GankEntity" + e);
-                        mSwipeRefreshWidget.setRefreshing(false);
-                    }
+            @Override
+            public void onError(Throwable e) {
+                Timber.d(e + "");
+                mSwipeRefreshWidget.setRefreshing(false);
+            }
 
-                    @Override
-                    public void onNext(GankEntity gankEntity) {
-                        Timber.d(gankEntity + "");
-                        adapter.addAllItem(gankEntity.getResults());
-                        adapter.notifyDataSetChanged();
-                        mSwipeRefreshWidget.setRefreshing(false);
-                    }
-                });
+            @Override
+            public void onNext(BDEntity bdEntity) {
+                Timber.d(bdEntity + "");
+                if (page == 0)
+                    adapter.clear();
+                adapter.addAllItem(bdEntity.getImgs());
+                adapter.notifyDataSetChanged();
+                mSwipeRefreshWidget.setRefreshing(false);
+            }
+        });
     }
 
     @Override
     public void onRefresh() {
         adapter.clear();
-        loadData();
+        loadData(mPage = 0, mSize);
     }
 }

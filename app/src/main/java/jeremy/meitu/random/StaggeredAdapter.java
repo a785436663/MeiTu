@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Random;
 
 import jeremy.meitu.R;
+import jeremy.meitu.common.PhotoViewActivity;
 import jeremy.meitu.entity.GankInfo;
 import timber.log.Timber;
 
@@ -81,8 +82,16 @@ public class StaggeredAdapter extends RecyclerView.Adapter<RecyclerView.ViewHold
             params.width = screenWidth / 2;
             img.setAspectRatio((float) (position % 5 + 5) / 10f);
             img.setLayoutParams(params);
-            Uri uri = Uri.parse(results.get(position).getUrl() + "?imageView2/0/w/"+(screenWidth / 2));
+            String url = results.get(position).getUrl() + "?imageView2/0/w/"+(screenWidth / 2);
+            final String bigUrl = results.get(position).getUrl() + "?imageView2/0/w/"+(screenWidth);
+            Uri uri = Uri.parse(url);
             downLoadImage(img, uri);
+            img.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    PhotoViewActivity.start(v.getContext(),bigUrl);
+                }
+            });
         }
     }
 

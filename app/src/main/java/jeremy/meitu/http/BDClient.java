@@ -39,8 +39,8 @@ public class BDClient extends RetrofitClient<BDService> {
         return BDService.class;
     }
 
-    public Observable<BDEntity> getImages(String col,int page, int size) {
-        return getService().getImages("美女", "全部", 0, page, size, "channel", 1)
+    public Observable<BDEntity> getImages(String col, String tag, int page, int size) {
+        return getService().getImages(col, tag, 0, page, size, "channel", 1)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread());
     }

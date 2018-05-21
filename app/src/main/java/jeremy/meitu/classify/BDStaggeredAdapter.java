@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Random;
 
 import jeremy.meitu.R;
+import jeremy.meitu.common.PhotoViewActivity;
 import jeremy.meitu.entity.BDInfo;
 import jeremy.meitu.entity.GankInfo;
 import timber.log.Timber;
@@ -30,14 +31,12 @@ public class BDStaggeredAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
 
     private static final int TYPE_ITEM = 0;
     private int screenWidth;
-    private Random random;
 
     public List<BDInfo> getList() {
         return results;
     }
 
     public BDStaggeredAdapter() {
-        random = new Random();
         results = new ArrayList<BDInfo>();
         screenWidth = ScreenUtils.getScreenWidth();
     }
@@ -74,15 +73,41 @@ public class BDStaggeredAdapter extends RecyclerView.Adapter<RecyclerView.ViewHo
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, final int position) {
         if (holder instanceof ItemViewHolder) {
-            BDInfo info = results.get(position);
+
+            View v = holder.itemView;
+
+            final BDInfo info = results.get(position);
+            float imgWidth = info.getImageWidth();
+            float imgHeight = info.getImageHeight();
+
+            if (imgWidth > 0 && (imgHeight / imgWidth) > 2)
+                imgHeight = imgWidth * 2;
+
+            int finalWidth = screenWidth / 2;
+            int finalHeight = (int) ((finalWidth * imgHeight) / imgWidth);
+
             SimpleDraweeView img = ((ItemViewHolder) holder).img;
             ViewGroup.LayoutParams params = img.getLayoutParams();
             //设置图片的相对于屏幕的宽高比
-            params.width = screenWidth / 2;
-            img.setAspectRatio(((float) info.getImageWidth()) / (float) info.getImageHeight());
+            params.width = finalWidth;
+            params.height = finalHeight;
             img.setLayoutParams(params);
-            Uri uri = Uri.parse(info.getImageUrl() + "?imageView2/0/w/" + (screenWidth / 2));
+
+            ViewGroup.LayoutParams parentParams = v.getLayoutParams();
+            parentParams.width = finalWidth;
+            parentParams.height = finalHeight;
+            v.setLayoutParams(parentParams);
+
+            Timber.e("img:" + imgWidth + "," + imgHeight + "\nheight:" + params.height + "," + parentParams.height);
+
+            Uri uri = Uri.parse(info.getImageUrl());
             downLoadImage(img, uri);
+            img.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    PhotoViewActivity.start(v.getContext(),info.getImageUrl());
+                }
+            });
         }
     }
 

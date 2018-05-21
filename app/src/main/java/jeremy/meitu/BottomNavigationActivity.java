@@ -14,11 +14,9 @@ import jeremy.meitu.random.RandomFrag;
 
 public class BottomNavigationActivity extends BaseActivity {
     RandomFrag randomFrag;
-    BDSortFrag bdSortFrag;
     BDMainClassifyFram mainFrag;
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             switch (item.getItemId()) {
@@ -26,10 +24,10 @@ public class BottomNavigationActivity extends BaseActivity {
                     switchFragment(R.id.fl_root, randomFrag);
                     return true;
                 case R.id.navigation_sort:
-                    switchFragment(R.id.fl_root, bdSortFrag);
+                    switchFragment(R.id.fl_root, mainFrag);
                     return true;
                 case R.id.navigation_notifications:
-                    switchFragment(R.id.fl_root, mainFrag);
+
                     return true;
             }
             return false;
@@ -40,7 +38,6 @@ public class BottomNavigationActivity extends BaseActivity {
     @Override
     protected void initView(Bundle savedInstanceState) {
         randomFrag = new RandomFrag();
-        bdSortFrag = new BDSortFrag();
         mainFrag = new BDMainClassifyFram();
 
         BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);

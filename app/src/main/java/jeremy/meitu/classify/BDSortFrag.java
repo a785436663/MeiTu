@@ -20,14 +20,15 @@ import timber.log.Timber;
 /**
  * Created by JIANGJIAN650 on 2018/5/21.
  */
-
 public class BDSortFrag extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
-    public static final String TITLE_TAG = "tabTitle";
+    public static final String TITLE_TAB = "tabTitle";
+    public static final String TITLE_TAG = "tag";
 
-    public static BDSortFrag newInstance(String tabTitle) {
+    public static BDSortFrag newInstance(String tabTitle, String tag) {
         Bundle args = new Bundle();
         BDSortFrag fragment = new BDSortFrag();
-        args.putString(TITLE_TAG, tabTitle);
+        args.putString(TITLE_TAB, tabTitle);
+        args.putString(TITLE_TAG, tag);
         fragment.setArguments(args);
         return fragment;
     }
@@ -38,27 +39,26 @@ public class BDSortFrag extends BaseFragment implements SwipeRefreshLayout.OnRef
     int lastVisibleItem;
     BDStaggeredAdapter adapter;
 
+    String tag;
     String tabTitle;
     int mPage = 0;
     int mSize = 10;
 
     @Override
     protected int setView() {
-        return R.layout.frag_random;
+        return R.layout.frag_bd_tag;
     }
 
     @Override
     protected void init(View view) {
-        mSwipeRefreshWidget = findViewById(view, R.id.swipe_refresh_widget);
-        mRecyclerView = findViewById(view, R.id.recylerview);
+        mSwipeRefreshWidget = findViewById(view, R.id.bd_swipe_refresh_widget);
+        mRecyclerView = findViewById(view, R.id.bd_recylerview);
         initRefresh();
         Timber.e("init:" + (mSwipeRefreshWidget));
     }
 
     @Override
     protected void initData(Bundle savedInstanceState) {
-        if (getArguments() != null)
-            tabTitle = getArguments().getString(TITLE_TAG);
     }
 
     @Override
@@ -68,6 +68,11 @@ public class BDSortFrag extends BaseFragment implements SwipeRefreshLayout.OnRef
 
     @Override
     protected void onFragmentFirstVisible() {
+        if (getArguments() != null) {
+            tabTitle = getArguments().getString(TITLE_TAB);
+            tag = getArguments().getString(TITLE_TAG);
+        }
+
         Timber.e("mSwipeRefreshWidget:" + (mSwipeRefreshWidget));
         mSwipeRefreshWidget.setRefreshing(true);
         loadData(mPage = 0, mSize);
@@ -119,7 +124,9 @@ public class BDSortFrag extends BaseFragment implements SwipeRefreshLayout.OnRef
             mSwipeRefreshWidget.setRefreshing(false);
             return;
         }
-        BDClient.getInstance().getImages(tabTitle, page * size, size).subscribe(new Subscriber<BDEntity>() {
+        if (TextUtils.isEmpty(tag))
+            tag = "全部";
+        BDClient.getInstance().getImages(tabTitle, tag, page * size, size).subscribe(new Subscriber<BDEntity>() {
             @Override
             public void onCompleted() {
             }

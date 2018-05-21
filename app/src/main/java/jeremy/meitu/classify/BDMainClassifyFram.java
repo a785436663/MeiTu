@@ -27,6 +27,7 @@ public class BDMainClassifyFram extends BaseFragment {
     //当标签数目小于等于4个时，标签栏不可滑动
     public static final int MOVABLE_COUNT = 4;
     private String[] tabs = new String[]{"美女", "壁纸", "明星", "搞笑", "动漫", "宠物"};
+    private String[] tags = new String[]{"诱惑", "全部", "全部", "全部", "全部", "全部"};
     private List<Fragment> fragments;
 
     @Override
@@ -38,13 +39,14 @@ public class BDMainClassifyFram extends BaseFragment {
     protected void init(View view) {
         tl = findViewById(view, R.id.tl);
         vp = findViewById(view, R.id.vp);
+        initDatas();
+        initViewPager();
+        initTabLayout();
     }
 
     @Override
     protected void initData(Bundle savedInstanceState) {
-        initDatas();
-        initViewPager();
-        initTabLayout();
+
     }
 
     @Override
@@ -74,13 +76,13 @@ public class BDMainClassifyFram extends BaseFragment {
     }
 
     private void initViewPager() {
-        vp.setAdapter(new MyPagerAdapter(getFragmentManager()));
+        vp.setAdapter(new MyPagerAdapter(getChildFragmentManager()));
     }
 
     private void initDatas() {
         fragments = new ArrayList<>();
         for (int i = 0; i < tabs.length; i++) {
-            fragments.add(BDSortFrag.newInstance(tabs[i]));
+            fragments.add(BDSortFrag.newInstance(tabs[i],tags[i]));
         }
     }
 

@@ -41,7 +41,18 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(setView(), container, false);
+        if (isReuseView) {
+            if (rootView == null) {
+                View view = inflater.inflate(setView(), container, false);
+                init(view);
+                rootView = view;
+            }
+            return rootView;
+        } else {
+            View view = inflater.inflate(setView(), container, false);
+            init(view);
+            return view;
+        }
     }
 
     @Override
@@ -49,22 +60,15 @@ public abstract class BaseFragment extends Fragment {
         //如果setUserVisibleHint()在rootView创建前调用时，那么
         //就等到rootView创建完后才回调onFragmentVisibleChange(true)
         //保证onFragmentVisibleChange()的回调发生在rootView创建完成之后，以便支持ui操作
-        if (rootView == null) {
-            if (getUserVisibleHint()) {
-                if (isFirstVisible) {
-                    if (isReuseView)
-                        init(view);
-                    onFragmentFirstVisible();
-                    isFirstVisible = false;
-                }
-                onFragmentVisibleChange(true);
-                isFragmentVisible = true;
+        if (getUserVisibleHint()) {
+            if (isFirstVisible) {
+                onFragmentFirstVisible();
+                isFirstVisible = false;
             }
-            rootView = view;
+            onFragmentVisibleChange(true);
+            isFragmentVisible = true;
         }
-        if (!isReuseView)
-            init(view);
-        super.onViewCreated(isReuseView ? rootView : view, savedInstanceState);
+        super.onViewCreated(view, savedInstanceState);
     }
 
     @Override

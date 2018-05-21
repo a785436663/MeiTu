@@ -36,7 +36,7 @@ public interface BDService {
 //    URL：http://image.baidu.com/i?tn=baiduimagejson&word=&pn=&rn=&ie=utf8
 //    参数：word=关键字&pn=开始条数&rn=显示数量
 //    PS：ie=utf8 是字符编码，但是！有时候是gb18030，所以看情况而定转码
-//    例子：http://image.baidu.com/i?tn=baiduimagejson&word=周杰伦&pn=10&rn=10&ie=utf8
+//    例子：https://image.baidu.com/search/acjson?tn=resultjson_com&catename=pcindexhot&ipn=rj&ct=201326592&is=&fp=result&queryWord=&cl=2&lm=-1&ie=utf-8&oe=utf-8&adpicid=&st=-1&z=&ic=0&word=刘德华&face=0&istype=2&qc=&nc=1&fr=&pn=0&rn=30
 
     /**
      * @param tn   resultjson_com

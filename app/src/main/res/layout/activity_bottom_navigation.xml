@@ -8,6 +8,14 @@
     android:orientation="vertical"
     tools:context="jeremy.meitu.BottomNavigationActivity">
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:minHeight="45dp"
+        android:background="@color/colorPrimary"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar" />
+
     <FrameLayout
         android:id="@+id/fl_root"
         android:layout_width="match_parent"

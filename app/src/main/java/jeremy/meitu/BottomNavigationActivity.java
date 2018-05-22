@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.TextView;
 
@@ -26,7 +27,7 @@ public class BottomNavigationActivity extends BaseActivity {
                 case R.id.navigation_sort:
                     switchFragment(R.id.fl_root, mainFrag);
                     return true;
-                case R.id.navigation_notifications:
+                case R.id.navigation_collection:
 
                     return true;
             }
@@ -37,6 +38,9 @@ public class BottomNavigationActivity extends BaseActivity {
 
     @Override
     protected void initView(Bundle savedInstanceState) {
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         randomFrag = new RandomFrag();
         mainFrag = new BDMainClassifyFram();
 

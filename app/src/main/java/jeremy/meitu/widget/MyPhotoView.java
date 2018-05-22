@@ -132,6 +132,7 @@ public class MyPhotoView extends PhotoView {
                                     CloseableStaticBitmap closeableStaticBitmap = (CloseableStaticBitmap) image;
                                     final Bitmap bitmap = closeableStaticBitmap.getUnderlyingBitmap();
                                     if (bitmap != null) {
+                                        listener.onSize(bitmap.getWidth(), bitmap.getHeight());
                                         setImageBitmap(bitmap);
                                         setScaleType(ScaleType.CENTER_CROP);
                                     }
@@ -146,5 +147,15 @@ public class MyPhotoView extends PhotoView {
                 .build();
         mDraweeHolder.setController(controller);
         setImageDrawable(mDraweeHolder.getTopLevelDrawable());
+    }
+
+    public interface OnSizeListener {
+        void onSize(int w, int h);
+    }
+
+    OnSizeListener listener;
+
+    public void setOnSizeListener(OnSizeListener listener) {
+        this.listener = listener;
     }
 }

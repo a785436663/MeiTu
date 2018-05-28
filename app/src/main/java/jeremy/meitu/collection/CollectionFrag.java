@@ -35,7 +35,7 @@ public class CollectionFrag extends BaseFragment implements SwipeRefreshLayout.O
 
     int mPage = 0;
     int mSize = 10;
-    private boolean isNoMore = true;
+    private boolean isNoMore = false;
 
     @Override
     protected int setView() {
@@ -116,6 +116,7 @@ public class CollectionFrag extends BaseFragment implements SwipeRefreshLayout.O
                     public void call(Subscriber<? super List<CollectionInfo>> subscriber) {
                         Timber.d("page:" + page + ",size:" + size);
                         List<CollectionInfo> infos = CollectionInfoEasyDao.getIns().find(null, null, null, null, null, null, (page * size) + "," + size);
+                        Timber.d("infos size:" + infos.size());
                         subscriber.onNext(infos);
                     }
                 })
@@ -138,8 +139,10 @@ public class CollectionFrag extends BaseFragment implements SwipeRefreshLayout.O
                         Timber.d("infos：" + infos);
                         if (page == 0)
                             adapter.clear();
-                        if (infos.size() < ((page + 1) * size))
+                        if (infos.size() < size)
                             isNoMore = true;
+                        else
+                            isNoMore = false;
                         adapter.addAllItem(infos);
                         adapter.notifyDataSetChanged();
                         mSwipeRefreshWidget.setRefreshing(false);

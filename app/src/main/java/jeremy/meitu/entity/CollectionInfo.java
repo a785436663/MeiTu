@@ -16,7 +16,7 @@ public class CollectionInfo {
     private int h;
     @EasyColumn(name = "CREATETIME")
     private long createTime;
-    @EasyColumn(name = "BOO")
+    @EasyColumn(name = "boolean")
     private boolean boo;
 
     public CollectionInfo() {

@@ -70,7 +70,7 @@ public class PhotoViewActivity extends BaseActivity {
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         MenuItem action_collcetion = menu.findItem(R.id.action_collcetion);
-        long urlCount = CollectionInfoEasyDao.getIns().count("url=?", url);
+        long urlCount = CollectionInfoEasyDao.getIns().count(CollectionInfoEasyDao.KEY_URL + "=?", url);
         action_collcetion.setTitle(urlCount > 0 ? "取消收藏" : "收藏");
         return super.onPrepareOptionsMenu(menu);
     }
@@ -82,7 +82,7 @@ public class PhotoViewActivity extends BaseActivity {
             if ("收藏".equals(item.getTitle()))
                 CollectionInfoEasyDao.getIns().save(new CollectionInfo(url, mW, mH, System.currentTimeMillis()));
             else
-                CollectionInfoEasyDao.getIns().delete("url=?", url);
+                CollectionInfoEasyDao.getIns().delete(CollectionInfoEasyDao.KEY_URL + "=?", url);
             supportInvalidateOptionsMenu();
             return true;
         }

@@ -26,7 +26,7 @@ public class BDMainClassifyFram extends BaseFragment {
     //当标签数目小于等于4个时，标签栏不可滑动
     public static final int MOVABLE_COUNT = 4;
     private String[] tabs = new String[]{"美女", "壁纸", "明星", "搞笑", "动漫", "宠物"};
-    private String[] tags = new String[]{"诱惑", "全部", "全部", "全部", "全部", "全部"};
+    private String[] tags = new String[]{"全部", "全部", "全部", "全部", "全部", "全部"};
     private List<Fragment> fragments;
 
     @Override

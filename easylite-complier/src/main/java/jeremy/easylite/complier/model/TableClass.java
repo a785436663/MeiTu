@@ -109,7 +109,7 @@ public class TableClass {
         /**
          * 构建类
          */
-        TypeSpec finderClass = TypeSpec.classBuilder(getEasyDaoName())
+        TypeSpec.Builder finderClass = TypeSpec.classBuilder(getEasyDaoName())
                 .addModifiers(Modifier.PUBLIC)
                 .addSuperinterface(ParameterizedTypeName.get(TypeUtil.IEasyDao, TypeName.get(typeMirror)))
                 .addField(getClassName(), "ins", Modifier.PRIVATE, Modifier.STATIC)
@@ -119,9 +119,22 @@ public class TableClass {
                 .addMethod(getDeleteMethod())
                 .addMethod(getFindMethod())
                 .addMethod(getCountMethod())
-                .addMethod(getContentValuesMethod())
-                .build();
-        return JavaFile.builder(getPackageName(), finderClass).build();
+                .addMethod(getContentValuesMethod());
+
+        FieldSpec.Builder keyIdBuilder = FieldSpec.builder(String.class, "KEY" + KEY_ID.toUpperCase(),
+                Modifier.STATIC, Modifier.PUBLIC, Modifier.FINAL)
+                .initializer("\""+KEY_ID+"\"")
+                .addJavadoc(KEY_ID + "'s key!");
+        finderClass.addField(keyIdBuilder.build());
+
+        for (ColumnField columnField : columnFields) {
+            FieldSpec.Builder fieldBuilder = FieldSpec.builder(String.class, "KEY_" + columnField.getName().toUpperCase(),
+                    Modifier.STATIC, Modifier.PUBLIC, Modifier.FINAL)
+                    .initializer("\""+columnField.getName()+"\"")
+                    .addJavadoc(columnField.getSimpleName() + "'s key!");
+            finderClass.addField(fieldBuilder.build());
+        }
+        return JavaFile.builder(getPackageName(), finderClass.build()).build();
     }
 
     String getPackageName() {
@@ -196,7 +209,7 @@ public class TableClass {
                         getTableName(), "columns", "selection", "selectionArgs", "groupBy", "having", "orderBy", "limit")
                 .beginControlFlow("try")
                 .beginControlFlow("if($N.moveToFirst())", "c")
-                .beginControlFlow("while($N.moveToNext())", "c")
+                .beginControlFlow("do")
                 .addStatement("$N info = new $N()", simpleName, simpleName);
 //        info.setUrl(c.getString(c.getColumnIndex("url")));
         for (ColumnField columnField : columnFields) {
@@ -210,7 +223,7 @@ public class TableClass {
             }
         }
         findBuilder.addStatement("list.add(info)")
-                .endControlFlow()
+                .endControlFlow("while($N.moveToNext())", "c")
                 .endControlFlow()
                 .endControlFlow()
                 .beginControlFlow("catch(Exception e)")

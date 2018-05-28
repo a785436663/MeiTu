@@ -5,6 +5,7 @@ import android.app.Application;
 import com.blankj.utilcode.util.Utils;
 import com.facebook.drawee.backends.pipeline.Fresco;
 
+import jeremy.easylite.api.EasyLiteUtil;
 import timber.log.Timber;
 
 public class MyApplication extends Application {
@@ -14,5 +15,6 @@ public class MyApplication extends Application {
 		Fresco.initialize(this);
 		Utils.init(this);
 		Timber.plant(new Timber.DebugTree());
+		EasyLiteUtil.init(this);
 	}
 }

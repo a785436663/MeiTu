@@ -5,8 +5,8 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.TextView;
@@ -20,7 +20,6 @@ import jeremy.meitu.base.BaseFragment;
 /**
  * Created by JIANGJIAN650 on 2018/5/21.
  */
-
 public class BDMainClassifyFram extends BaseFragment {
     private TabLayout tl;
     private ViewPager vp;
@@ -62,7 +61,7 @@ public class BDMainClassifyFram extends BaseFragment {
         //MODE_FIXED标签栏不可滑动，各个标签会平分屏幕的宽度
         tl.setTabMode(tabs.length <= MOVABLE_COUNT ? TabLayout.MODE_FIXED : TabLayout.MODE_SCROLLABLE);
         //指示条的颜色
-        tl.setSelectedTabIndicatorColor(getResources().getColor(android.R.color.holo_blue_dark));
+        tl.setSelectedTabIndicatorColor(ContextCompat.getColor(getContext(), android.R.color.holo_blue_dark));
         tl.setSelectedTabIndicatorHeight((int) getResources().getDimension(R.dimen.indicatorHeight));
         //关联tabLayout和ViewPager,两者的选择和滑动状态会相互影响
         tl.setupWithViewPager(vp);
@@ -82,7 +81,7 @@ public class BDMainClassifyFram extends BaseFragment {
     private void initDatas() {
         fragments = new ArrayList<>();
         for (int i = 0; i < tabs.length; i++) {
-            fragments.add(BDSortFrag.newInstance(tabs[i],tags[i]));
+            fragments.add(BDSortFrag.newInstance(tabs[i], tags[i]));
         }
     }
 

@@ -9,39 +9,30 @@ import android.text.TextUtils;
 import android.util.TypedValue;
 import android.view.View;
 
+import java.util.List;
+
 import jeremy.meitu.R;
 import jeremy.meitu.base.BaseFragment;
-import jeremy.meitu.classify.BDStaggeredAdapter;
-import jeremy.meitu.entity.BDEntity;
-import jeremy.meitu.http.BDClient;
+import jeremy.meitu.entity.CollectionInfo;
+import jeremy.meitu.entity.CollectionInfoEasyDao;
 import jeremy.meitu.utils.Utils;
+import rx.Observable;
 import rx.Subscriber;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 /**
  * Created by JIANGJIAN650 on 2018/5/21.
  */
 public class CollectionFrag extends BaseFragment implements SwipeRefreshLayout.OnRefreshListener {
-    public static final String TITLE_TAB = "tabTitle";
-    public static final String TITLE_TAG = "tag";
-
-    public static CollectionFrag newInstance(String tabTitle, String tag) {
-        Bundle args = new Bundle();
-        CollectionFrag fragment = new CollectionFrag();
-        args.putString(TITLE_TAB, tabTitle);
-        args.putString(TITLE_TAG, tag);
-        fragment.setArguments(args);
-        return fragment;
-    }
 
     SwipeRefreshLayout mSwipeRefreshWidget;
     RecyclerView mRecyclerView;
     StaggeredGridLayoutManager mStaggeredGridLayoutManager;
     int lastVisibleItem;
-    BDStaggeredAdapter adapter;
+    CollectionAdapter adapter;
 
-    String tag;
-    String tabTitle;
     int mPage = 0;
     int mSize = 10;
 
@@ -69,11 +60,6 @@ public class CollectionFrag extends BaseFragment implements SwipeRefreshLayout.O
 
     @Override
     protected void onFragmentFirstVisible() {
-        if (getArguments() != null) {
-            tabTitle = getArguments().getString(TITLE_TAB);
-            tag = getArguments().getString(TITLE_TAG);
-        }
-
         Timber.e("mSwipeRefreshWidget:" + (mSwipeRefreshWidget));
         mSwipeRefreshWidget.setRefreshing(true);
         loadData(mPage = 0, mSize);
@@ -116,38 +102,43 @@ public class CollectionFrag extends BaseFragment implements SwipeRefreshLayout.O
         mRecyclerView.setLayoutManager(mStaggeredGridLayoutManager);
         mRecyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        adapter = new BDStaggeredAdapter();
+        adapter = new CollectionAdapter();
         mRecyclerView.setAdapter(adapter);
     }
 
     private void loadData(final int page, int size) {
-        if (TextUtils.isEmpty(tabTitle)) {
-            mSwipeRefreshWidget.setRefreshing(false);
-            return;
-        }
-        if (TextUtils.isEmpty(tag))
-            tag = "全部";
-        BDClient.getInstance().getImages(tabTitle, tag, page * size, size).subscribe(new Subscriber<BDEntity>() {
-            @Override
-            public void onCompleted() {
-            }
+        Observable
+                .create(new Observable.OnSubscribe<List<CollectionInfo>>() {
+                    @Override
+                    public void call(Subscriber<? super List<CollectionInfo>> subscriber) {
+                        List<CollectionInfo> infos = CollectionInfoEasyDao.getIns().find(null, null, null, null, null, null);
+                        subscriber.onNext(infos);
+                    }
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new Subscriber<List<CollectionInfo>>() {
+                    @Override
+                    public void onCompleted() {
+                        Timber.d("onCompleted");
+                    }
 
-            @Override
-            public void onError(Throwable e) {
-                Timber.d(e + "");
-                mSwipeRefreshWidget.setRefreshing(false);
-            }
+                    @Override
+                    public void onError(Throwable e) {
+                        Timber.d(e + "");
+                        mSwipeRefreshWidget.setRefreshing(false);
+                    }
 
-            @Override
-            public void onNext(BDEntity bdEntity) {
-                Timber.d(bdEntity + "");
-                if (page == 0)
-                    adapter.clear();
-                adapter.addAllItem(bdEntity.getImgs());
-                adapter.notifyDataSetChanged();
-                mSwipeRefreshWidget.setRefreshing(false);
-            }
-        });
+                    @Override
+                    public void onNext(List<CollectionInfo> infos) {
+                        Timber.d("infos：" + infos);
+                        if (page == 0)
+                            adapter.clear();
+                        adapter.addAllItem(infos);
+                        adapter.notifyDataSetChanged();
+                        mSwipeRefreshWidget.setRefreshing(false);
+                    }
+                });
     }
 
     @Override

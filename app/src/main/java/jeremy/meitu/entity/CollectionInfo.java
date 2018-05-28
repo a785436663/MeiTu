@@ -1,20 +1,40 @@
 package jeremy.meitu.entity;
 
+import jeremy.easylite.annotation.EasyColumn;
+import jeremy.easylite.annotation.EasyTable;
+
 /**
  * Created by JIANGJIAN650 on 2018/5/22.
  */
-
+@EasyTable(name = "db_collection")
 public class CollectionInfo {
+    @EasyColumn(name = "URL",unique = true)
     private String url;
+    @EasyColumn(name = "WIDTH")
     private int w;
+    @EasyColumn(name = "HEIGHT")
     private int h;
-    private String createTime;
+    @EasyColumn(name = "CREATETIME")
+    private long createTime;
+    @EasyColumn(name = "BOO")
+    private boolean boo;
 
-    public CollectionInfo(String url, int w, int h, String createTime) {
+    public CollectionInfo() {
+    }
+
+    public CollectionInfo(String url, int w, int h, long createTime) {
         this.url = url;
         this.w = w;
         this.h = h;
         this.createTime = createTime;
+    }
+
+    public boolean isBoo() {
+        return boo;
+    }
+
+    public void setBoo(boolean boo) {
+        this.boo = boo;
     }
 
     public String getUrl() {
@@ -41,11 +61,22 @@ public class CollectionInfo {
         this.h = h;
     }
 
-    public String getCreateTime() {
+    public long getCreateTime() {
         return createTime;
     }
 
-    public void setCreateTime(String createTime) {
+    public void setCreateTime(long createTime) {
         this.createTime = createTime;
+    }
+
+    @Override
+    public String toString() {
+        return "CollectionInfo{" +
+                "url='" + url + '\'' +
+                ", w=" + w +
+                ", h=" + h +
+                ", createTime=" + createTime +
+                ", boo=" + boo +
+                '}';
     }
 }

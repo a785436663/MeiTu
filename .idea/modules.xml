@@ -5,6 +5,9 @@
       <module fileurl="file://$PROJECT_DIR$/MeiTu.iml" filepath="$PROJECT_DIR$/MeiTu.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/baselib/baselib.iml" filepath="$PROJECT_DIR$/baselib/baselib.iml" />
+      <module fileurl="file://$PROJECT_DIR$/easylite/easylite.iml" filepath="$PROJECT_DIR$/easylite/easylite.iml" />
+      <module fileurl="file://$PROJECT_DIR$/easylite-annotation/easylite-annotation.iml" filepath="$PROJECT_DIR$/easylite-annotation/easylite-annotation.iml" />
+      <module fileurl="file://$PROJECT_DIR$/easylite-complier/easyLite-complier.iml" filepath="$PROJECT_DIR$/easylite-complier/easyLite-complier.iml" />
     </modules>
   </component>
 </project>

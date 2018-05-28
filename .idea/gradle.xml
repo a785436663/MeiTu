@@ -10,6 +10,9 @@
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/baselib" />
+            <option value="$PROJECT_DIR$/easylite" />
+            <option value="$PROJECT_DIR$/easylite-annotation" />
+            <option value="$PROJECT_DIR$/easylite-complier" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

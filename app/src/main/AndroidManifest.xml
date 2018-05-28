@@ -10,6 +10,17 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+
+        <meta-data
+            android:name="database"
+            android:value="test.db" />
+        <meta-data
+            android:name="version"
+            android:value="1" />
+        <meta-data
+            android:name="logcat"
+            android:value="true" />
+
         <activity android:name=".BottomNavigationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

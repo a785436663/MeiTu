@@ -4,12 +4,18 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import java.util.Date;
+import java.util.List;
+
 import jeremy.meitu.R;
 import jeremy.meitu.base.BaseActivity;
+import jeremy.meitu.entity.CollectionInfo;
+import jeremy.meitu.entity.CollectionInfoEasyDao;
 import jeremy.meitu.widget.MyPhotoView;
 
 public class PhotoViewActivity extends BaseActivity {
@@ -22,14 +28,14 @@ public class PhotoViewActivity extends BaseActivity {
 
     int mW;
     int mH;
-
+    String url;
     boolean isLoad = false;
 
     @Override
     protected void initView(Bundle savedInstanceState) {
         initToolBar();
         MyPhotoView photoView = (MyPhotoView) findViewById(R.id.photo_view);
-        String url = getIntent().getStringExtra(KEY_URL);
+        url = getIntent().getStringExtra(KEY_URL);
         photoView.setOnSizeListener(new MyPhotoView.OnSizeListener() {
             @Override
             public void onSize(int w, int h) {
@@ -69,6 +75,9 @@ public class PhotoViewActivity extends BaseActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_collcetion) {
+            CollectionInfoEasyDao.getIns().save(new CollectionInfo(url,mW,mH,System.currentTimeMillis()));
+            List<CollectionInfo> list = CollectionInfoEasyDao.getIns().find(null,null,null,null,null,null);
+            Log.e("list","list:"+list);
             return true;
         }
         return super.onOptionsItemSelected(item);

@@ -118,6 +118,7 @@ public class TableClass {
                 .addMethod(getUpdataMethod())
                 .addMethod(getDeleteMethod())
                 .addMethod(getFindMethod())
+                .addMethod(getCountMethod())
                 .addMethod(getContentValuesMethod())
                 .build();
         return JavaFile.builder(getPackageName(), finderClass).build();
@@ -166,6 +167,18 @@ public class TableClass {
         return deleteBuilder.build();
     }
 
+    MethodSpec getCountMethod() {
+        MethodSpec.Builder deleteBuilder = MethodSpec.methodBuilder("count")
+                .addModifiers(Modifier.PUBLIC)
+                .addAnnotation(Override.class)
+                .addParameter(String.class, "whereClause")
+                .addParameter(String[].class, "whereArgs")
+                .varargs(true)
+                .returns(long.class)
+                .addStatement("return jeremy.easylite.api.EasyDatabaseUtil.count(\"$N\",$N,$N)", tableName, "whereClause", "whereArgs");
+        return deleteBuilder.build();
+    }
+
     MethodSpec getFindMethod() {
         MethodSpec.Builder findBuilder = MethodSpec.methodBuilder("find")
                 .addModifiers(Modifier.PUBLIC)
@@ -176,10 +189,11 @@ public class TableClass {
                 .addParameter(String.class, "groupBy")
                 .addParameter(String.class, "having")
                 .addParameter(String.class, "orderBy")
+                .addParameter(String.class, "limit")
                 .returns(List.class)
                 .addStatement("List<$N> list = new java.util.ArrayList<>()", simpleName)
-                .addStatement("android.database.Cursor c = jeremy.easylite.api.EasyDatabaseUtil.find(\"$N\",$N,$N,$N,$N,$N,$N)",
-                        getTableName(), "columns", "selection", "selectionArgs", "groupBy", "having", "orderBy")
+                .addStatement("android.database.Cursor c = jeremy.easylite.api.EasyDatabaseUtil.find(\"$N\",$N,$N,$N,$N,$N,$N,$N)",
+                        getTableName(), "columns", "selection", "selectionArgs", "groupBy", "having", "orderBy", "limit")
                 .beginControlFlow("try")
                 .beginControlFlow("if($N.moveToFirst())", "c")
                 .beginControlFlow("while($N.moveToNext())", "c")

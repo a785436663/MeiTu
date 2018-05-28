@@ -4,13 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-
-import java.util.Date;
-import java.util.List;
 
 import jeremy.meitu.R;
 import jeremy.meitu.base.BaseActivity;
@@ -72,12 +68,22 @@ public class PhotoViewActivity extends BaseActivity {
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        MenuItem action_collcetion = menu.findItem(R.id.action_collcetion);
+        long urlCount = CollectionInfoEasyDao.getIns().count("url=?", url);
+        action_collcetion.setTitle(urlCount > 0 ? "取消收藏" : "收藏");
+        return super.onPrepareOptionsMenu(menu);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_collcetion) {
-            CollectionInfoEasyDao.getIns().save(new CollectionInfo(url,mW,mH,System.currentTimeMillis()));
-            List<CollectionInfo> list = CollectionInfoEasyDao.getIns().find(null,null,null,null,null,null);
-            Log.e("list","list:"+list);
+            if ("收藏".equals(item.getTitle()))
+                CollectionInfoEasyDao.getIns().save(new CollectionInfo(url, mW, mH, System.currentTimeMillis()));
+            else
+                CollectionInfoEasyDao.getIns().delete("url=?", url);
+            supportInvalidateOptionsMenu();
             return true;
         }
         return super.onOptionsItemSelected(item);

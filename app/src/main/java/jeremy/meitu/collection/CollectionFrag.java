@@ -35,6 +35,7 @@ public class CollectionFrag extends BaseFragment implements SwipeRefreshLayout.O
 
     int mPage = 0;
     int mSize = 10;
+    private boolean isNoMore = true;
 
     @Override
     protected int setView() {
@@ -81,6 +82,8 @@ public class CollectionFrag extends BaseFragment implements SwipeRefreshLayout.O
             public void onScrollStateChanged(RecyclerView recyclerView,
                                              int newState) {
                 super.onScrollStateChanged(recyclerView, newState);
+                if (isNoMore)
+                    return;
                 if (newState == RecyclerView.SCROLL_STATE_IDLE
                         && lastVisibleItem + 1 == adapter.getItemCount()) {
                     mSwipeRefreshWidget.setRefreshing(true);
@@ -111,7 +114,8 @@ public class CollectionFrag extends BaseFragment implements SwipeRefreshLayout.O
                 .create(new Observable.OnSubscribe<List<CollectionInfo>>() {
                     @Override
                     public void call(Subscriber<? super List<CollectionInfo>> subscriber) {
-                        List<CollectionInfo> infos = CollectionInfoEasyDao.getIns().find(null, null, null, null, null, null);
+                        Timber.d("page:" + page + ",size:" + size);
+                        List<CollectionInfo> infos = CollectionInfoEasyDao.getIns().find(null, null, null, null, null, null, (page * size) + "," + size);
                         subscriber.onNext(infos);
                     }
                 })
@@ -134,6 +138,8 @@ public class CollectionFrag extends BaseFragment implements SwipeRefreshLayout.O
                         Timber.d("infos：" + infos);
                         if (page == 0)
                             adapter.clear();
+                        if (infos.size() < ((page + 1) * size))
+                            isNoMore = true;
                         adapter.addAllItem(infos);
                         adapter.notifyDataSetChanged();
                         mSwipeRefreshWidget.setRefreshing(false);

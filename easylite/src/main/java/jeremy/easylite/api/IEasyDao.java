@@ -19,5 +19,7 @@ public interface IEasyDao<T> {
 
     public List<T> find(String[] columns, String selection,
                         String[] selectionArgs, String groupBy, String having,
-                        String orderBy);
+                        String orderBy, String limit);
+
+    public long count(String whereClause, String[] whereArgs);
 }

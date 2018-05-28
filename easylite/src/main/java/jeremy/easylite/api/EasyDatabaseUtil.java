@@ -5,6 +5,8 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.database.sqlite.SQLiteStatement;
+import android.text.TextUtils;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -93,162 +95,31 @@ public class EasyDatabaseUtil {
     }
 
     public static Cursor find(String table, String[] columns, String selection,
-                                       String[] selectionArgs, String groupBy, String having,
-                                       String orderBy) {
+                              String[] selectionArgs, String groupBy, String having,
+                              String orderBy, String limit) {
         SQLiteDatabase sqLiteDatabase = getDB();
-        Cursor c = sqLiteDatabase.query(table, columns, selection, selectionArgs, groupBy, having, orderBy);
+        Cursor c = sqLiteDatabase.query(table, columns, selection, selectionArgs, groupBy, having, orderBy, limit);
         return c;
     }
 
-//    public static <T> void deleteAll(Class<T> type) {
-//        Utils.getDaoByName(type.getSimpleName());
-//        SQLiteDatabase db = EasyLiteUtil.getDB();
-//        db.delete(NamingHelper.toSQLName(type), null, null);
-//    }
-//
-//    public static <T> void deleteAll(Class<T> type, String whereClause, String... whereArgs) {
-//        SugarDb db = getSugarContext().getSugarDb();
-//        SQLiteDatabase sqLiteDatabase = db.getDB();
-//        sqLiteDatabase.delete(NamingHelper.toSQLName(type), whereClause, whereArgs);
-//    }
-//
-//    @SuppressWarnings("deprecation")
-//    public static <T> void saveInTx(T... objects) {
-//        saveInTx(Arrays.asList(objects));
-//    }
-//
-//    @SuppressWarnings("deprecation")
-//    public static <T> void saveInTx(Collection<T> objects) {
-//        SQLiteDatabase sqLiteDatabase = getSugarContext().getSugarDb().getDB();
-//        try {
-//            sqLiteDatabase.beginTransaction();
-//            sqLiteDatabase.setLockingEnabled(false);
-//            for (T object : objects) {
-//                SugarRecord.save(object);
-//            }
-//            sqLiteDatabase.setTransactionSuccessful();
-//        } catch (Exception e) {
-//            LogUtils.i("Sugar", "Error in saving in transaction " + e.getMessage());
-//        } finally {
-//            sqLiteDatabase.endTransaction();
-//            sqLiteDatabase.setLockingEnabled(true);
-//        }
-//    }
-//
-//    public static <T> List<T> listAll(Class<T> type) {
-//        return find(type, null, null, null, null, null);
-//    }
-//
-//    public static <T> T findById(Class<T> type, Long id) {
-//        List<T> list = find(type, "id=?", new String[]{String.valueOf(id)}, null, null, "1");
-//        if (list.isEmpty()) return null;
-//        return list.get(0);
-//    }
-//
-//    public static <T> T findById(Class<T> type, Integer id) {
-//        return findById(type, Long.valueOf(id));
-//    }
-//
-//    public static <T> Iterator<T> findAll(Class<T> type) {
-//        return findAsIterator(type, null, null, null, null, null);
-//    }
-//
-//    public static <T> Iterator<T> findAsIterator(Class<T> type, String whereClause, String... whereArgs) {
-//        return findAsIterator(type, whereClause, whereArgs, null, null, null);
-//    }
-//
-//    public static <T> Iterator<T> findWithQueryAsIterator(Class<T> type, String query, String... arguments) {
-//        SugarDb db = getSugarContext().getSugarDb();
-//        SQLiteDatabase sqLiteDatabase = db.getDB();
-//        Cursor c = sqLiteDatabase.rawQuery(query, arguments);
-//        return new CursorIterator<>(type, c);
-//    }
-//
-//    public static <T> Iterator<T> findAsIterator(Class<T> type, String whereClause, String[] whereArgs, String groupBy, String orderBy, String limit) {
-//        SugarDb db = getSugarContext().getSugarDb();
-//        SQLiteDatabase sqLiteDatabase = db.getDB();
-//        Cursor c = sqLiteDatabase.query(NamingHelper.toSQLName(type), null, whereClause, whereArgs,
-//                groupBy, null, orderBy, limit);
-//        return new CursorIterator<>(type, c);
-//    }
-//
-//    public static <T> List<T> find(Class<T> type, String whereClause, String... whereArgs) {
-//        return find(type, whereClause, whereArgs, null, null, null);
-//    }
-//
-//    public static <T> List<T> findWithQuery(Class<T> type, String query, String... arguments) {
-//        SugarDb db = getSugarContext().getSugarDb();
-//        SQLiteDatabase sqLiteDatabase = db.getDB();
-//        T entity;
-//        List<T> toRet = new ArrayList<>();
-//        Cursor c = sqLiteDatabase.rawQuery(query, arguments);
-//
-//        try {
-//            while (c.moveToNext()) {
-//                entity = type.getDeclaredConstructor().newInstance();
-//                SugarRecord.inflate(c, entity);
-//                toRet.add(entity);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        } finally {
-//            c.close();
-//        }
-//
-//        return toRet;
-//    }
-//
-//    public static void executeQuery(String query, String... arguments) {
-//        getSugarContext().getSugarDb().getDB().execSQL(query, arguments);
-//    }
-//
-//    public static <T> List<T> find(Class<T> type, String whereClause, String[] whereArgs, String groupBy, String orderBy, String limit) {
-//        SugarDb db = getSugarContext().getSugarDb();
-//        SQLiteDatabase sqLiteDatabase = db.getDB();
-//        T entity;
-//        List<T> toRet = new ArrayList<>();
-//        Cursor c = sqLiteDatabase.query(NamingHelper.toSQLName(type), null, whereClause, whereArgs,
-//                groupBy, null, orderBy, limit);
-//        try {
-//            while (c.moveToNext()) {
-//                entity = type.getDeclaredConstructor().newInstance();
-//                SugarRecord.inflate(c, entity);
-//                toRet.add(entity);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        } finally {
-//            c.close();
-//        }
-//        return toRet;
-//    }
-//
-//    public static <T> long count(Class<?> type) {
-//        return count(type, null, null, null, null, null);
-//    }
-//
-//    public static <T> long count(Class<?> type, String whereClause, String[] whereArgs) {
-//        return count(type, whereClause, whereArgs, null, null, null);
-//    }
-//
-//    public static <T> long count(Class<?> type, String whereClause, String[] whereArgs, String groupBy, String orderBy, String limit) {
-//        SQLiteDatabase sqLiteDatabase = EasyLiteUtil.getDB();
-//
-//        long toRet = -1;
-//        String filter = (!TextUtils.isEmpty(whereClause)) ? " where " + whereClause : "";
-//        SQLiteStatement sqLiteStatament = sqLiteDatabase.compileStatement("SELECT count(*) FROM " + NamingHelper.toSQLName(type) + filter);
-//        if (whereArgs != null) {
-//            for (int i = whereArgs.length; i != 0; i--) {
-//                sqLiteStatament.bindString(i, whereArgs[i - 1]);
-//            }
-//        }
-//        try {
-//            toRet = sqLiteStatament.simpleQueryForLong();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        } finally {
-//            sqLiteStatament.close();
-//        }
-//        return toRet;
-//    }
+    public static long count(String table, String whereClause, String[] whereArgs) {
+        SQLiteDatabase sqLiteDatabase = getDB();
+
+        long toRet = -1;
+        String filter = (!TextUtils.isEmpty(whereClause)) ? " where " + whereClause : "";
+        SQLiteStatement sqLiteStatament = sqLiteDatabase.compileStatement("SELECT count(*) FROM " + table + filter);
+        if (whereArgs != null) {
+            for (int i = whereArgs.length; i != 0; i--) {
+                sqLiteStatament.bindString(i, whereArgs[i - 1]);
+            }
+        }
+        try {
+            toRet = sqLiteStatament.simpleQueryForLong();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            sqLiteStatament.close();
+        }
+        return toRet;
+    }
 }

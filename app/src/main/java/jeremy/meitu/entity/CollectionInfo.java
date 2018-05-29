@@ -71,7 +71,7 @@ public class CollectionInfo {
 
     @Override
     public String toString() {
-        return "CollectionInfo{" +
+        return "\nCollectionInfo{" +
                 "url='" + url + '\'' +
                 ", w=" + w +
                 ", h=" + h +

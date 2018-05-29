@@ -7,7 +7,7 @@
       <module fileurl="file://$PROJECT_DIR$/baselib/baselib.iml" filepath="$PROJECT_DIR$/baselib/baselib.iml" />
       <module fileurl="file://$PROJECT_DIR$/easylite/easylite.iml" filepath="$PROJECT_DIR$/easylite/easylite.iml" />
       <module fileurl="file://$PROJECT_DIR$/easylite-annotation/easylite-annotation.iml" filepath="$PROJECT_DIR$/easylite-annotation/easylite-annotation.iml" />
-      <module fileurl="file://$PROJECT_DIR$/easylite-complier/easyLite-complier.iml" filepath="$PROJECT_DIR$/easylite-complier/easyLite-complier.iml" />
+      <module fileurl="file://$PROJECT_DIR$/easylite-complier/easylite-complier.iml" filepath="$PROJECT_DIR$/easylite-complier/easylite-complier.iml" />
     </modules>
   </component>
 </project>
